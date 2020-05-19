@@ -31,26 +31,26 @@ name='VGZ'
 chan='HHZ'
 net='CN'
 location = '--'
-timezone = -7
+timezone = -7 #UTC timezone. if -ve add -ve sign
 timeFix = timezone * 3600
 
-startDate = UTCDateTime("2020-02-03T19:00:00") #7pm utc is 1pm calgary
+startDate = UTCDateTime("2020-02-03T19:00:00") #again, based on UTC time
 dates = []
 medianPower = []
 
 t1 = startDate
 
-t2 = startDate + 3600
-lastDate = startDate + (84 * 86400)
+t2 = startDate + 3600 #one hour of recording
+lastDate = startDate + (84 * 86400) #number of days of recording * seconds in a day
 
 while t2 <= lastDate:
     st = fdsn_client.get_waveforms(network=net, station=name, location= location,
                                channel=chan, starttime=t1, endtime=t2,attach_response=True)
     st.remove_response(output="DISP")
     medianPower.append(dofft(st[0]))
-    dates.append((t2+timeFix).date) #-21600 for calgary
-    t1 += 86400 
-    #seconds to next day
+    dates.append((t2+timeFix).date)
+    #adding one day worth of seconds 
+    t1 += 86400    
     t2 = t2 + 86400
 
 plt.plot(dates, medianPower)
